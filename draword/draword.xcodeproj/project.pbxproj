@@ -16,6 +16,7 @@
 		EDDD5E6526B7166400C6B15E /* MainPhoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD5E6426B7166400C6B15E /* MainPhoneView.swift */; };
 		EDDD5E6826B7175300C6B15E /* QuarterCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD5E6726B7175300C6B15E /* QuarterCircle.swift */; };
 		EDDD5E6A26B71D3500C6B15E /* NewRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD5E6926B71D3500C6B15E /* NewRoomView.swift */; };
+		EDDD5E6C26B7F14200C6B15E /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD5E6B26B7F14200C6B15E /* ConnectionManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		EDDD5E6426B7166400C6B15E /* MainPhoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPhoneView.swift; sourceTree = "<group>"; };
 		EDDD5E6726B7175300C6B15E /* QuarterCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuarterCircle.swift; sourceTree = "<group>"; };
 		EDDD5E6926B71D3500C6B15E /* NewRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewRoomView.swift; sourceTree = "<group>"; };
+		EDDD5E6B26B7F14200C6B15E /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +106,7 @@
 				EDDD5E5C26B70B1100C6B15E /* GUIConst.swift */,
 				EDDD5E5E26B70CEE00C6B15E /* GamePlay.swift */,
 				EDDD5E6726B7175300C6B15E /* QuarterCircle.swift */,
+				EDDD5E6B26B7F14200C6B15E /* ConnectionManager.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -182,6 +185,7 @@
 				EDDD5E6526B7166400C6B15E /* MainPhoneView.swift in Sources */,
 				EDDD5E5F26B70CEE00C6B15E /* GamePlay.swift in Sources */,
 				EDDD5E5D26B70B1100C6B15E /* GUIConst.swift in Sources */,
+				EDDD5E6C26B7F14200C6B15E /* ConnectionManager.swift in Sources */,
 				EDDD5E4E26B6F04300C6B15E /* drawordApp.swift in Sources */,
 				EDDD5E6826B7175300C6B15E /* QuarterCircle.swift in Sources */,
 			);

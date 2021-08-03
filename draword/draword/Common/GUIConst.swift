@@ -11,3 +11,10 @@ extension Color {
     static let drawordAccent = Color("AccentColor")
     static let drawordSecondary = Color("SecondaryAccentColor")
 }
+
+enum DisplayView {
+    case main
+    case newRoom
+    case phoneWaitParticipants
+    case game
+}

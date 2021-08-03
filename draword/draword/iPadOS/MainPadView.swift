@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct MainPadView: View {
-    @State private var nop: Int = DEFAULT_NUM_OF_PLAYERS
+    @Binding var displayView: DisplayView
+    @Binding var nop: Int
+    @ObservedObject var connectionManager: ConnectionManager = ConnectionManager()
     
     var body: some View {
         ZStack {
@@ -32,7 +34,17 @@ struct MainPadView: View {
                     .padding()
                 
                 Button {
-                    print("\(nop)")
+                    connectionManager.set(name: "Draword", code: random(digits: CODE_LENGTH))
+                    connectionManager.host(callback: {
+                        // An invite has been sent
+                        if (connectionManager.usernames.count == nop) {
+                            print("All connections have been made")
+                            
+                            // Change display view
+                        }
+                    })
+                    
+                    displayView = DisplayView.newRoom
                 } label: {
                     Text("Play")
                         .bold()
@@ -46,6 +58,14 @@ struct MainPadView: View {
                 Spacer()
             }
         }
+    }
+    
+    func random(digits:Int) -> String {
+        var number = String()
+        for _ in 1...digits {
+           number += "\(Int.random(in: 1...9))"
+        }
+        return number
     }
 }
 
@@ -138,11 +158,13 @@ struct MainPadBackgroundView: View {
 
 // Preview
 struct ContentView_Previews: PreviewProvider {
+    static let con: ConnectionManager = ConnectionManager()
+    
     static var previews: some View {
         Group {
-            MainPadView()
+            MainPadView(displayView: .constant(DisplayView.main), nop: .constant(4), connectionManager: con)
                 .preferredColorScheme(.light)
-            MainPadView()
+            MainPadView(displayView: .constant(DisplayView.main), nop: .constant(4), connectionManager: con)
                 .preferredColorScheme(.dark)
         }
     }
