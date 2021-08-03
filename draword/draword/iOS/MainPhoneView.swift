@@ -15,68 +15,29 @@ struct MainPhoneView: View {
     @State var code: String = ""
     
     var body: some View {
-        ZStack {
-            MainPhoneBackgroundView()
-            
-            VStack {
-                Spacer()
-                
-                Text("DRAWORD")
-                    .font(.custom("ArialRoundedMTBold", size: 40))
-                    .foregroundColor(.drawordAccent)
-                
-                Text("By ALFCorp")
-                    .frame(width: 200, height: 30, alignment: .trailing)
-                    .font(.custom("ArialRoundedMTBold", size: 15))
-                    .foregroundColor(.drawordSecondary)
-                
-                Spacer()
-                
-                switch displayView {
-                case .phoneWaitParticipants:
-                    WaitingSubView()
-                default:
-                    ConnectSubView(displayView: $displayView, username: $username, code: $code, connectionManager: connectionManager)
-                }
-                
-                Spacer()
-            }
-        }
-    }
-}
-
-struct MainPhoneBackgroundView: View {
-    var body: some View {
         VStack {
-            HStack {
-                Spacer()
-                
-                QuarterCircle(radius: 200,
-                              from: 180,
-                              to: 270)
-                    .fill(Color(UIColor.systemFill))
-                    .frame(width: 1, height: 1)
-            }
-            
             Spacer()
-            
-            HStack {
-                QuarterCircle(radius: 250,
-                              from: 0,
-                              to: 270)
-                    .fill(Color(.secondaryLabel))
-                    .frame(width: 1, height: 1)
                 
-                Spacer()
+            Text("DRAWORD")
+                .font(.custom("ArialRoundedMTBold", size: 40))
+                .foregroundColor(.drawordAccent)
                 
-                QuarterCircle(radius: 150,
-                              from: 270,
-                              to: 180)
-                    .fill(Color(.label))
-                    .frame(width: 1, height: 1)
+            Text("By ALFCorp")
+                .frame(width: 200, height: 30, alignment: .trailing)
+                .font(.custom("ArialRoundedMTBold", size: 15))
+                .foregroundColor(.drawordSecondary)
+                
+            Spacer()
+                
+            switch displayView {
+            case .phoneWaitParticipants:
+                WaitingSubView()
+            default:
+                ConnectSubView(displayView: $displayView, username: $username, code: $code, connectionManager: connectionManager)
             }
+                
+            Spacer()
         }
-        .ignoresSafeArea()
     }
 }
 
@@ -109,6 +70,8 @@ struct ConnectSubView: View {
                         
                         // TODO: Set display view
                         displayView = .phoneWaitParticipants
+                        
+                        connectionManager.messageCallback = onGameStart
                     })
                 }
             } label: {
@@ -127,6 +90,14 @@ struct ConnectSubView: View {
         if code.count > CODE_LENGTH {
             code = String(code.prefix(CODE_LENGTH))
         }
+    }
+    
+    func onGameStart(message: Message) {
+        displayView = .game
+        connectionManager.messageCallback = onGameMessage
+    }
+    func onGameMessage(message: Message) {
+        // TODO
     }
 }
 

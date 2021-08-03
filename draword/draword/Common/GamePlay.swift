@@ -89,10 +89,10 @@ struct Message {
 }
 
 class GameState: ObservableObject {
-    @Published var usernames: [String]
-    @Published var points: [Int]
+    @Published var usernames: [String] = []
+    @Published var points: [Int] = []
     
-    init(connectionManager: ConnectionManager) {
+    func set(connectionManager: ConnectionManager) {
         self.usernames = connectionManager.usernames
         self.points = [Int](repeating: 0, count: connectionManager.usernames.count)
     }

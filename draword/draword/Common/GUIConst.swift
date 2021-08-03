@@ -13,8 +13,11 @@ extension Color {
 }
 
 enum DisplayView {
+    // Common iPhone and iPad
     case main
     case newRoom
-    case phoneWaitParticipants
     case game
+    // iPhone only
+    case phoneWaitParticipants
+    case guess
 }

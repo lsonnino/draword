@@ -17,6 +17,8 @@
 		EDDD5E6826B7175300C6B15E /* QuarterCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD5E6726B7175300C6B15E /* QuarterCircle.swift */; };
 		EDDD5E6A26B71D3500C6B15E /* NewRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD5E6926B71D3500C6B15E /* NewRoomView.swift */; };
 		EDDD5E6C26B7F14200C6B15E /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD5E6B26B7F14200C6B15E /* ConnectionManager.swift */; };
+		EDDD5E6E26B99B6700C6B15E /* PhoneGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD5E6D26B99B6700C6B15E /* PhoneGameView.swift */; };
+		EDDD5E7026B99DA500C6B15E /* PadGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD5E6F26B99DA500C6B15E /* PadGameView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,8 @@
 		EDDD5E6726B7175300C6B15E /* QuarterCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuarterCircle.swift; sourceTree = "<group>"; };
 		EDDD5E6926B71D3500C6B15E /* NewRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewRoomView.swift; sourceTree = "<group>"; };
 		EDDD5E6B26B7F14200C6B15E /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
+		EDDD5E6D26B99B6700C6B15E /* PhoneGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneGameView.swift; sourceTree = "<group>"; };
+		EDDD5E6F26B99DA500C6B15E /* PadGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PadGameView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +92,7 @@
 			children = (
 				EDDD5E4F26B6F04300C6B15E /* MainPadView.swift */,
 				EDDD5E6926B71D3500C6B15E /* NewRoomView.swift */,
+				EDDD5E6F26B99DA500C6B15E /* PadGameView.swift */,
 			);
 			path = iPadOS;
 			sourceTree = "<group>";
@@ -96,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				EDDD5E6426B7166400C6B15E /* MainPhoneView.swift */,
+				EDDD5E6D26B99B6700C6B15E /* PhoneGameView.swift */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -182,11 +188,13 @@
 			files = (
 				EDDD5E5026B6F04300C6B15E /* MainPadView.swift in Sources */,
 				EDDD5E6A26B71D3500C6B15E /* NewRoomView.swift in Sources */,
+				EDDD5E6E26B99B6700C6B15E /* PhoneGameView.swift in Sources */,
 				EDDD5E6526B7166400C6B15E /* MainPhoneView.swift in Sources */,
 				EDDD5E5F26B70CEE00C6B15E /* GamePlay.swift in Sources */,
 				EDDD5E5D26B70B1100C6B15E /* GUIConst.swift in Sources */,
 				EDDD5E6C26B7F14200C6B15E /* ConnectionManager.swift in Sources */,
 				EDDD5E4E26B6F04300C6B15E /* drawordApp.swift in Sources */,
+				EDDD5E7026B99DA500C6B15E /* PadGameView.swift in Sources */,
 				EDDD5E6826B7175300C6B15E /* QuarterCircle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

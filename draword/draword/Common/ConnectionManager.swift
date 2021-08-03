@@ -25,6 +25,7 @@ class ConnectionManager: NSObject, ObservableObject {
     private var browser: MCNearbyServiceBrowser? // Only used by iPad
     private var advertiser: MCNearbyServiceAdvertiser? // Only used by iPhone
     var callback: (() -> Void)!
+    var messageCallback: ((Message) -> Void)!
     
     func set(name: String, code: String) {
         self.name = name
@@ -222,9 +223,8 @@ extension ConnectionManager: MCSessionDelegate {
     
     // Called when data is received
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        // === ... ===
-        //    todo
-        // === ... ===
+        let message = Message.decode(from: data)
+        self.messageCallback(message)
     }
     
     // Called when a stream is received

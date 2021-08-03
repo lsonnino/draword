@@ -11,52 +11,56 @@ struct MainPadView: View {
     @Binding var displayView: DisplayView
     @Binding var nop: Int
     @ObservedObject var connectionManager: ConnectionManager = ConnectionManager()
+    @ObservedObject var gameState: GameState = GameState()
     
     var body: some View {
-        ZStack {
-            MainPadBackgroundView()
-            
-            VStack {
-                Spacer()
+        VStack {
+            Spacer()
                 
-                Text("DRAWORD")
-                    .font(.custom("ArialRoundedMTBold", size: 100))
-                    .foregroundColor(.drawordAccent)
+            Text("DRAWORD")
+                .font(.custom("ArialRoundedMTBold", size: 100))
+                .foregroundColor(.drawordAccent)
                 
-                Text("By ALFCorp")
-                    .frame(width: 500, height: 30, alignment: .trailing)
-                    .font(.custom("ArialRoundedMTBold", size: 25))
-                    .foregroundColor(.drawordSecondary)
+            Text("By ALFCorp")
+                .frame(width: 500, height: 30, alignment: .trailing)
+                .font(.custom("ArialRoundedMTBold", size: 25))
+                .foregroundColor(.drawordSecondary)
                 
-                Spacer()
+            Spacer()
                 
-                PlayerNumberSelectorView(nop: $nop)
-                    .padding()
+            PlayerNumberSelectorView(nop: $nop)
+                .padding()
                 
-                Button {
-                    connectionManager.set(name: "Draword", code: random(digits: CODE_LENGTH))
-                    connectionManager.host(callback: {
-                        // An invite has been sent
-                        if (connectionManager.usernames.count == nop) {
-                            print("All connections have been made")
-                            
-                            // Change display view
-                        }
-                    })
+            Button {
+                connectionManager.set(name: "Draword", code: random(digits: CODE_LENGTH))
+                connectionManager.host(callback: {
+                    // An invite has been sent
+                    if (connectionManager.usernames.count == nop) {
+                        print("All connections have been made")
+                        
+                        // Stop the connection phase
+                        connectionManager.stopConnecting()
+                        gameState.set(connectionManager: connectionManager)
+                        
+                        // Change display view
+                        displayView = .game
+                        
+                        connectionManager.sendStartGame()
+                    }
+                })
                     
-                    displayView = DisplayView.newRoom
-                } label: {
-                    Text("Play")
-                        .bold()
-                        .frame(width: 400, height: 50)
-                        .foregroundColor(.white)
-                        .background(Color.drawordAccent)
-                        .clipShape(Capsule())
-                        .padding()
-                }
-                
-                Spacer()
+                displayView = DisplayView.newRoom
+            } label: {
+                Text("Play")
+                    .bold()
+                    .frame(width: 400, height: 50)
+                    .foregroundColor(.white)
+                    .background(Color.drawordAccent)
+                    .clipShape(Capsule())
+                    .padding()
             }
+                
+            Spacer()
         }
     }
     
@@ -116,41 +120,6 @@ struct PlayerNumberSelectorView: View {
                 }
             }
         }
-    }
-}
-
-struct MainPadBackgroundView: View {
-    var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-                
-                QuarterCircle(radius: 400,
-                              from: 180,
-                              to: 270)
-                    .fill(Color(UIColor.systemFill))
-                    .frame(width: 1, height: 1)
-            }
-            
-            Spacer()
-            
-            HStack {
-                QuarterCircle(radius: 500,
-                              from: 0,
-                              to: 270)
-                    .fill(Color(.secondaryLabel))
-                    .frame(width: 1, height: 1)
-                
-                Spacer()
-                
-                QuarterCircle(radius: 300,
-                              from: 270,
-                              to: 180)
-                    .fill(Color(.label))
-                    .frame(width: 1, height: 1)
-            }
-        }
-        .ignoresSafeArea()
     }
 }
 
