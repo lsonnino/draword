@@ -33,6 +33,7 @@ struct MainPhoneView: View {
             case .phoneWaitParticipants:
                 WaitingSubView()
                     .onAppear(perform: {
+                        connectionManager.callback = { return }
                         connectionManager.messageCallback = { (message) in
                             displayView = .game
                         }

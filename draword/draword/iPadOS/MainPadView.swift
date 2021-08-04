@@ -35,7 +35,7 @@ struct MainPadView: View {
                 connectionManager.set(name: "Draword", code: random(digits: CODE_LENGTH))
                 connectionManager.host()
                     
-                displayView = DisplayView.newRoom
+                displayView = .newRoom
             } label: {
                 Text("Play")
                     .bold()

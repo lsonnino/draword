@@ -221,6 +221,7 @@ struct YourWordView: View {
     
     func send() {
         submitted = true
+        shown = false
         connectionManager.submitWord(submit: word)
     }
 }
