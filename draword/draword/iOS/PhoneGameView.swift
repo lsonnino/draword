@@ -22,6 +22,7 @@ struct PhoneGameView: View {
     @State var points: Int = 0
     @State var attemptedGuesses: [AttemptedGuess] = []
     @State var word: String = ""
+    @State var submitted: Bool = false
     
     var body: some View {
         VStack {
@@ -33,7 +34,7 @@ struct PhoneGameView: View {
             switch displayView {
             case .game:
                 Divider()
-                YourWordView(word: $word)
+                YourWordView(word: $word, submitted: $submitted, connectionManager: connectionManager)
             default:
                 AttemptFieldView(attemptedGuesses: $attemptedGuesses, connectionManager: connectionManager)
             }
@@ -49,8 +50,11 @@ struct PhoneGameView: View {
             let att = AttemptedGuess(user: message.user, attempt: message.text)
             attemptedGuesses.append(att)
         case .draw:
-            word = message.text
+            submitted = false
+            word = ""
             displayView = .game
+        case .game:
+            displayView = .guess
         case .point:
             attemptedGuesses.append(AttemptedGuess(user: message.user, attempt: message.text, thisUser: message.val > 0, guess: false))
             points += Int(message.val)
@@ -163,22 +167,47 @@ struct AttemptFieldView: View {
 struct YourWordView: View {
     @State var shown: Bool = false
     @Binding var word: String
+    @Binding var submitted: Bool
+    @ObservedObject var connectionManager: ConnectionManager
     
     var body: some View {
         VStack (spacing: 10) {
             HStack {
-                Text("Your word is: ")
+                Text(submitted ? "Your word is: " : "Choose your word")
                     .foregroundColor(.drawordAccent)
                     .font(.custom("ArialRoundedMTBold", size: 25))
                 
                 Spacer()
             }
             
-            Text(shown ? word : " - tap to show - ")
-                .foregroundColor(.drawordSecondary)
-                .font(.custom("ArialRoundedMTBold", size: 30))
-                .transition(.opacity)
-                .id("ID - Your Word - " + shown.description)
+            if (submitted) {
+                Text(shown ? word : " - tap to show - ")
+                    .foregroundColor(.drawordSecondary)
+                    .font(.custom("ArialRoundedMTBold", size: 30))
+                    .transition(.opacity)
+                    .id("ID - Your Word - " + shown.description)
+            }
+            else {
+                HStack {
+                    TextField("Your word", text: $word, onCommit:  {
+                        send()
+                    })
+                        .frame(height: 60)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    
+                    Button {
+                        send()
+                    } label: {
+                        Text("Submit")
+                            .bold()
+                            .frame(width: 100, height: 40)
+                            .foregroundColor(.white)
+                            .background(Color.drawordAccent)
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                    }
+                }
+                .padding()
+            }
         }
         .padding()
         .contentShape(Rectangle()) // Can tap on the whole area
@@ -187,6 +216,11 @@ struct YourWordView: View {
                 shown.toggle()
             }
         }
+    }
+    
+    func send() {
+        submitted = true
+        connectionManager.submitWord(submit: word)
     }
 }
 

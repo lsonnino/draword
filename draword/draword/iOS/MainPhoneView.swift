@@ -32,6 +32,11 @@ struct MainPhoneView: View {
             switch displayView {
             case .phoneWaitParticipants:
                 WaitingSubView()
+                    .onAppear(perform: {
+                        connectionManager.messageCallback = { (message) in
+                            displayView = .game
+                        }
+                    })
             default:
                 ConnectSubView(displayView: $displayView, username: $username, code: $code, connectionManager: connectionManager)
             }
@@ -68,10 +73,8 @@ struct ConnectSubView: View {
                         // An invite has been received and accepted
                         connectionManager.stopConnecting()
                         
-                        // TODO: Set display view
+                        // Set display view
                         displayView = .phoneWaitParticipants
-                        
-                        connectionManager.messageCallback = onGameStart
                     })
                 }
             } label: {
@@ -91,10 +94,6 @@ struct ConnectSubView: View {
             code = String(code.prefix(CODE_LENGTH))
         }
     }
-    
-    func onGameStart(message: Message) {
-        displayView = .game
-    }
 }
 
 struct WaitingSubView: View {
@@ -102,9 +101,11 @@ struct WaitingSubView: View {
         VStack {
             Text("Waiting for other participants to join...")
                 .font(.custom("ArialRoundedMTBold", size: 30))
+                .multilineTextAlignment(.center)
                 .foregroundColor(.drawordAccent)
             Text("Grab a coffee or press your friends, the game will start soon !")
                 .font(.custom("ArialRoundedMTBold", size: 25).monospacedDigit())
+                .multilineTextAlignment(.center)
                 .foregroundColor(.drawordSecondary)
                 .frame(height: 150)
         }
@@ -114,6 +115,6 @@ struct WaitingSubView: View {
 
 struct MainPhoneView_Previews: PreviewProvider {
     static var previews: some View {
-        MainPhoneView(displayView: .constant(.main))
+        MainPhoneView(displayView: .constant(.phoneWaitParticipants))
     }
 }

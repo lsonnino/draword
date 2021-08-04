@@ -15,34 +15,66 @@ struct PadGameView: View {
     @ObservedObject var connectionManager: ConnectionManager = ConnectionManager()
     
     @State var drawing: Int = 0
+    @State var word: String = ""
+    @State var submitted: Bool = false
     @State var timeRemaining = 10
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @State private var canvasView = PKCanvasView()
     
     var body: some View {
-        VStack {
-            PointsView(nop: $nop, drawing: $drawing, gameState: gameState, connectionManager: connectionManager)
-            
-            CanvasView(canvasView: $canvasView)
-            
-            FooterView(canvasView: $canvasView, timeRemaining: $timeRemaining)
-                .onReceive(timer) { _ in
-                    if timeRemaining > 0 {
-                        timeRemaining -= 1
+        VStack (spacing: 0) {
+                PointsView(nop: $nop, drawing: $drawing, gameState: gameState, connectionManager: connectionManager)
+                
+                ZStack {
+                    VStack {
+                        CanvasView(canvasView: $canvasView)
+                        
+                        FooterView(canvasView: $canvasView, timeRemaining: $timeRemaining)
+                            .onReceive(timer) { _ in
+                                if timeRemaining > 0 {
+                                    timeRemaining -= 1
+                                }
+                                else {
+                                    print("Timer ended")
+                                }
+                            }
                     }
-                    else {
-                        print("Timer ended")
+                    
+                    if (!submitted) {
+                        Text("Waiting for \(connectionManager.usernames[drawing]) to choose a word")
+                            .font(.custom("ArialRoundedMTBold", size: 80))
+                            .bold()
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .foregroundColor(.white)
+                            .background(Color.drawordAccent)
                     }
                 }
-        }
-        .onAppear(perform: {
-            connectionManager.messageCallback = {(message) in onReceive(message: message)}
-        })
+            }
+            .onAppear(perform: {
+                connectionManager.messageCallback = {(message) in onReceive(message: message)}
+            })
     }
     
     func onReceive(message: Message) {
         switch message.type {
+        case .submit:
+            submitted = true
+            word = message.text
+        case .attempt:
+            // note: the broadcast is automatic
+            if (word == message.text && message.userIndex >= 0) { // The user guessed
+                // Notify that someone guessed
+                connectionManager.sendPoint(to: message.userIndex)
+                gameState.points[message.userIndex] += 1
+                
+                // Next player
+                drawing += 1
+                drawing = drawing % nop
+                connectionManager.sendGame()
+                connectionManager.sendDraw(to: drawing)
+            }
         default:
             print("Unsupported message type \(message.type.rawValue)")
         }
@@ -127,7 +159,7 @@ struct FooterView: View {
             .background(Color.drawordAccent)
             
             Button {
-                
+                canvasView.drawing = PKDrawing()
             } label: {
                 Image(systemName: "trash.circle")
                     .resizable()

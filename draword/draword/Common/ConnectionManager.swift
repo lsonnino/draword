@@ -67,9 +67,21 @@ class ConnectionManager: NSObject, ObservableObject {
         }
     }
     
-    func sendStartGame() {
+    func sendGame() {
         var message = Message()
-        message.type = .gameStart
+        message.type = .game
+        
+        do {
+            try self.session?.send(Message.encode(message: message), toPeers: self.peers, with: .reliable)
+        }
+        catch {
+            // Do nothing
+        }
+    }
+    func submitWord(submit word: String) {
+        var message = Message()
+        message.type = .submit
+        message.text = word
         
         do {
             try self.session?.send(Message.encode(message: message), toPeers: self.peers, with: .reliable)
@@ -128,13 +140,12 @@ class ConnectionManager: NSObject, ObservableObject {
             }
         }
     }
-    func sendDraw(with text: String) {
+    func sendDraw(to index: Int) {
         var message = Message()
         message.type = .draw
-        message.text = text
         
         do {
-            try self.session?.send(Message.encode(message: message), toPeers: self.peers, with: .reliable)
+            try self.session?.send(Message.encode(message: message), toPeers: [self.peers[index]], with: .reliable)
         }
         catch {
             // Do nothing
@@ -155,6 +166,10 @@ class ConnectionManager: NSObject, ObservableObject {
                 // Do nothing
             }
         }
+    }
+    
+    func disconnect() {
+        self.session!.disconnect()
     }
 }
 
@@ -179,7 +194,6 @@ extension ConnectionManager: MCNearbyServiceBrowserDelegate {
         DispatchQueue.main.async {
             self.peers.append(peerID)
             self.usernames.append(peerID.displayName)
-            self.connectionStates.append(.connected)
         }
         
         // Callback
@@ -223,7 +237,12 @@ extension ConnectionManager: MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         guard let index = self.peers.firstIndex(of: peerID) else { return }
         DispatchQueue.main.async {
-            self.connectionStates[index] = state
+            if (index >= 0 && index < self.connectionStates.count) {
+                self.connectionStates[index] = state
+            }
+            else {
+                self.connectionStates.append(state)
+            }
         }
         
         switch state {
@@ -240,12 +259,19 @@ extension ConnectionManager: MCSessionDelegate {
     
     // Called when data is received
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        let message = Message.decode(from: data)
-        self.messageCallback(message)
+        var message = Message.decode(from: data)
         
-        // If it is an attempt, broadcast it
+        // If it is an attempt
         if (message.type == .attempt) {
+            // Broadcast it
             self.boradcastAttempt(boradcast: message.text, from: peerID)
+            
+            // Set who sent it for the iPad
+            message.userIndex = self.peers.firstIndex(of: peerID) ?? -1
+        }
+        
+        DispatchQueue.main.async {
+            self.messageCallback(message)
         }
     }
     

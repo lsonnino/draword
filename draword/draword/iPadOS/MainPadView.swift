@@ -45,7 +45,7 @@ struct MainPadView: View {
                         // Change display view
                         displayView = .game
                         
-                        connectionManager.sendStartGame()
+                        connectionManager.sendGame()
                     }
                 })
                     

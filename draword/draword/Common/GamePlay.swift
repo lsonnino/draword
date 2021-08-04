@@ -19,10 +19,15 @@ let CODE_LENGTH = 4
     - {arg_1} - {description}
     - {arg_2} - {description}
  
- GAME_START - iPad - The game starts
+ GAME - iPad - The game starts or the player has to get back to game state
+ 
+ SUBMIT - iPhone - The user who has to choose a word submit his words
+    - text - The word
  
  ATTEMPT - iPhone - An user tried to guess the word
     - text - The attempted guess the user made
+    - userIndex - The index of the user who made the attempt as in the iPad's connectionManager
+            It is sent automatically by the connectionManager on message reception, iPad side
  
  BROADCAST_ATTEMPT - iPad - Another user tried to guess the word
     - var - The number of characters that constitute the username
@@ -34,35 +39,36 @@ let CODE_LENGTH = 4
     - val - 1 if the user is the one who guessed it, 0 otherwise
  
  DRAW - iPad - The user is the one who has to draw
-    - text - The word he has to draw
  
  END_GAME - iPad - The game ended
     - text - The username of the player who won
     - val - The number of points the user has
  */
 enum MessageType: UInt8 {
-    case gameStart = 1
+    case game = 1
     case attempt = 2
     case broadcastAttempt = 3
     case point = 4
-    case draw = 5
-    case endGame = 6
+    case submit = 5
+    case draw = 6
+    case endGame = 7
 }
 struct Message {
-    var type: MessageType = .gameStart
+    var type: MessageType = .game
     var val: UInt8 = 0
     var text: String = ""
     var user: String = ""
+    var userIndex: Int = 0 // Filled by ConnectionManager on reception
     
     static func encode(message: Message) -> Data {
         let textData = message.text.data(using: .utf8)
         
         switch message.type {
-        case .gameStart:
+        case .game, .draw:
             var data = Data(count: 1)
             data[0] = message.type.rawValue
             return data
-        case .attempt, .draw:
+        case .attempt, .submit:
             var data = Data(count: 1 + textData!.count)
             data[0] = message.type.rawValue
             data.replaceSubrange((1...textData!.count + 0), with: textData!)
@@ -91,7 +97,7 @@ struct Message {
         message.type = type
         
         switch message.type {
-        case .attempt, .draw:
+        case .attempt, .submit:
             message.text = String(data: data.suffix(from: 1), encoding: .utf8)!
         case .broadcastAttempt:
             message.val = data[1]
