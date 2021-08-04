@@ -66,13 +66,8 @@ struct ConnectSubView: View {
             
             Button {
                 if (!username.isEmpty && code.count == CODE_LENGTH) {
-                    print("Play pressed")
-                    
                     connectionManager.set(name: username, code: code)
                     connectionManager.join(callback: {
-                        // An invite has been received and accepted
-                        connectionManager.stopConnecting()
-                        
                         // Set display view
                         displayView = .phoneWaitParticipants
                     })

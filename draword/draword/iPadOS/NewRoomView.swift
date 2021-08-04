@@ -11,6 +11,8 @@ import MultipeerConnectivity
 struct NewRoomView: View {
     @Binding var nop: Int
     @ObservedObject var connectionManager: ConnectionManager
+    @ObservedObject var gameState: GameState = GameState()
+    @Binding var displayView: DisplayView
     
     var body: some View {
         ZStack {
@@ -44,6 +46,25 @@ struct NewRoomView: View {
                 Spacer()
             }
         }
+        .onAppear(perform: {
+            connectionManager.callback = check
+        })
+    }
+    
+    func check() {
+        // An invite has been sent
+        if (connectionManager.usernames.count == nop) {
+            print("All connections have been made")
+            gameState.set(connectionManager: connectionManager)
+            
+            connectionManager.sendGame()
+            
+            // Change display view
+            displayView = .game
+        }
+        else {
+            print("Only \(connectionManager.usernames.count)/\(nop)")
+        }
     }
 }
 
@@ -61,7 +82,7 @@ struct NewRoomView_Previews: PreviewProvider {
     public static let code: String = "1234"
     
     static var previews: some View {
-        NewRoomView(nop: .constant(4), connectionManager: getConnectionManager())
+        NewRoomView(nop: .constant(4), connectionManager: getConnectionManager(), displayView: .constant(.newRoom))
     }
     
     static func getConnectionManager() -> ConnectionManager {

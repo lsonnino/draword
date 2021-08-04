@@ -40,6 +40,7 @@ struct PhoneGameView: View {
             }
         }
         .onAppear {
+            connectionManager.callback = { return }
             connectionManager.messageCallback = onGameMessage
         }
     }

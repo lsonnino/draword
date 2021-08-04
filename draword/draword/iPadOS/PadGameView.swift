@@ -53,6 +53,7 @@ struct PadGameView: View {
                 }
             }
             .onAppear(perform: {
+                connectionManager.callback = { return }
                 connectionManager.messageCallback = {(message) in onReceive(message: message)}
             })
     }

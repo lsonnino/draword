@@ -33,21 +33,7 @@ struct MainPadView: View {
                 
             Button {
                 connectionManager.set(name: "Draword", code: random(digits: CODE_LENGTH))
-                connectionManager.host(callback: {
-                    // An invite has been sent
-                    if (connectionManager.usernames.count == nop) {
-                        print("All connections have been made")
-                        
-                        // Stop the connection phase
-                        connectionManager.stopConnecting()
-                        gameState.set(connectionManager: connectionManager)
-                        
-                        // Change display view
-                        displayView = .game
-                        
-                        connectionManager.sendGame()
-                    }
-                })
+                connectionManager.host()
                     
                 displayView = DisplayView.newRoom
             } label: {

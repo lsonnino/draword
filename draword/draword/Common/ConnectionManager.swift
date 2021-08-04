@@ -40,11 +40,9 @@ class ConnectionManager: NSObject, ObservableObject {
         self.session?.delegate = self
     }
     
-    func host(callback: (() -> Void)!) { // Called by the iPad
+    func host() { // Called by the iPad
         browser = MCNearbyServiceBrowser(peer: self.peerID!, serviceType: SERVICE_NAME)
         browser!.delegate = self
-        
-        self.callback = callback
         
         browser!.startBrowsingForPeers()
     }
@@ -254,6 +252,10 @@ extension ConnectionManager: MCSessionDelegate {
             print("Connection for peer \(peerID.displayName) passed to state: not connected")
         default:
             print("Connection for peer \(peerID.displayName) passed to state: unknown")
+        }
+        
+        DispatchQueue.main.async {
+            self.callback()
         }
     }
     

@@ -28,7 +28,7 @@ struct drawordApp: App {
                     case .game:
                         PadGameView(nop: $nop, gameState: gameState, connectionManager: connectionManager)
                     case DisplayView.newRoom:
-                        NewRoomView(nop: $nop, connectionManager: connectionManager)
+                        NewRoomView(nop: $nop, connectionManager: connectionManager, gameState: gameState, displayView: $displayView)
                     default: // main
                         MainPadView(displayView: $displayView, nop: $nop, connectionManager: connectionManager, gameState: gameState)
                     }
