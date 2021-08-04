@@ -94,10 +94,6 @@ struct ConnectSubView: View {
     
     func onGameStart(message: Message) {
         displayView = .game
-        connectionManager.messageCallback = onGameMessage
-    }
-    func onGameMessage(message: Message) {
-        // TODO
     }
 }
 
@@ -108,7 +104,7 @@ struct WaitingSubView: View {
                 .font(.custom("ArialRoundedMTBold", size: 30))
                 .foregroundColor(.drawordAccent)
             Text("Grab a coffee or press your friends, the game will start soon !")
-                .font(.custom("ArialRoundedMTBold", size: 25))
+                .font(.custom("ArialRoundedMTBold", size: 25).monospacedDigit())
                 .foregroundColor(.drawordSecondary)
                 .frame(height: 150)
         }

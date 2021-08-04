@@ -21,8 +21,13 @@ let CODE_LENGTH = 4
  
  GAME_START - iPad - The game starts
  
- ATTEMPT - iPhone - An user
+ ATTEMPT - iPhone - An user tried to guess the word
     - text - The attempted guess the user made
+ 
+ BROADCAST_ATTEMPT - iPad - Another user tried to guess the word
+    - var - The number of characters that constitute the username
+    - text - The attempted guess
+    - user - The username of the user
  
  POINT - iPad - Someone guessed the word
     - text - The username of the user who got the point
@@ -38,14 +43,16 @@ let CODE_LENGTH = 4
 enum MessageType: UInt8 {
     case gameStart = 1
     case attempt = 2
-    case point = 3
-    case draw = 4
-    case endGame = 5
+    case broadcastAttempt = 3
+    case point = 4
+    case draw = 5
+    case endGame = 6
 }
 struct Message {
     var type: MessageType = .gameStart
     var val: UInt8 = 0
     var text: String = ""
+    var user: String = ""
     
     static func encode(message: Message) -> Data {
         let textData = message.text.data(using: .utf8)
@@ -59,6 +66,15 @@ struct Message {
             var data = Data(count: 1 + textData!.count)
             data[0] = message.type.rawValue
             data.replaceSubrange((1...textData!.count + 0), with: textData!)
+            return data
+        case .broadcastAttempt:
+            let userData = message.user.data(using: .utf8)
+            
+            var data = Data(count: 2 + textData!.count + userData!.count)
+            data[0] = message.type.rawValue
+            data[1] = UInt8(userData!.count)
+            data.replaceSubrange((2...userData!.count + 1), with: userData!)
+            data.replaceSubrange((userData!.count + 2...textData!.count + userData!.count + 1), with: textData!)
             return data
         case .point, .endGame:
             var data = Data(count: 2 + textData!.count)
@@ -77,6 +93,10 @@ struct Message {
         switch message.type {
         case .attempt, .draw:
             message.text = String(data: data.suffix(from: 1), encoding: .utf8)!
+        case .broadcastAttempt:
+            message.val = data[1]
+            message.user = String(data: data.subdata(in: (2..<Int(message.val) + 2)), encoding: .utf8)!
+            message.text = String(data: data.suffix(from: Int(message.val) + 2), encoding: .utf8)!
         case .point, .endGame:
             message.val = data[1]
             message.text = String(data: data.suffix(from: 2), encoding: .utf8)!

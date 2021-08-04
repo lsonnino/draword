@@ -90,6 +90,23 @@ class ConnectionManager: NSObject, ObservableObject {
             // Do nothing
         }
     }
+    func boradcastAttempt(boradcast attempt: String, from user: MCPeerID) {
+        var message = Message()
+        message.type = .broadcastAttempt
+        message.text = attempt
+        message.user = user.displayName
+        
+        for index in (0 ... self.peers.count-1) {
+            if (self.peers[index] != user) {
+                do {
+                    try self.session?.send(Message.encode(message: message), toPeers: [self.peers[index]], with: .reliable)
+                }
+                catch {
+                    // Do nothing
+                }
+            }
+        }
+    }
     func sendPoint(to winner: Int) {
         var message = Message()
         message.type = .point
@@ -225,6 +242,11 @@ extension ConnectionManager: MCSessionDelegate {
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         let message = Message.decode(from: data)
         self.messageCallback(message)
+        
+        // If it is an attempt, broadcast it
+        if (message.type == .attempt) {
+            self.boradcastAttempt(boradcast: message.text, from: peerID)
+        }
     }
     
     // Called when a stream is received

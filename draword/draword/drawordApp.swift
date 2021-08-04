@@ -26,7 +26,7 @@ struct drawordApp: App {
                     
                     switch displayView {
                     case .game:
-                        PadGameView(gameState: gameState)
+                        PadGameView(nop: $nop, gameState: gameState, connectionManager: connectionManager)
                     case DisplayView.newRoom:
                         NewRoomView(nop: $nop, connectionManager: connectionManager)
                     default: // main
@@ -44,7 +44,7 @@ struct drawordApp: App {
                     
                     switch displayView {
                     case .game, .guess:
-                        PhoneGameView(gameState: gameState, displayView: $displayView, connectionManager: connectionManager)
+                        PhoneGameView(displayView: $displayView, gameState: gameState, connectionManager: connectionManager)
                     default: // main or phoneWaitParticipants
                         MainPhoneView(displayView: $displayView, connectionManager: connectionManager)
                     }
