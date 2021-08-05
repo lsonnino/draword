@@ -17,7 +17,7 @@ struct PadGameView: View {
     @State var drawing: Int = 0
     @State var word: String = ""
     @State var submitted: Bool = false
-    @State var timeRemaining = 10
+    @State var timeRemaining = TIMER_LENGTH
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @State private var canvasView = PKCanvasView()
@@ -36,7 +36,8 @@ struct PadGameView: View {
                                     timeRemaining -= 1
                                 }
                                 else {
-                                    print("Timer ended")
+                                    timeRemaining = TIMER_LENGTH
+                                    nextPlayer()
                                 }
                             }
                     }
@@ -52,6 +53,7 @@ struct PadGameView: View {
                     }
                 }
             }
+            .ignoresSafeArea()
             .onAppear(perform: {
                 connectionManager.callback = { return }
                 connectionManager.messageCallback = {(message) in onReceive(message: message)}
@@ -69,16 +71,22 @@ struct PadGameView: View {
                 // Notify that someone guessed
                 connectionManager.sendPoint(to: message.userIndex)
                 gameState.points[message.userIndex] += 1
+                gameState.points[drawing] += 1
                 
                 // Next player
-                drawing += 1
-                drawing = drawing % nop
-                connectionManager.sendGame()
-                connectionManager.sendDraw(to: drawing)
+                nextPlayer()
             }
         default:
             print("Unsupported message type \(message.type.rawValue)")
         }
+    }
+    
+    func nextPlayer() {
+        drawing += 1
+        drawing = drawing % nop
+        connectionManager.sendGame()
+        connectionManager.sendDraw(to: drawing)
+        canvasView.drawing = PKDrawing()
     }
 }
 
@@ -126,7 +134,11 @@ struct CanvasView {
 }
 extension CanvasView: UIViewRepresentable {
     func makeUIView(context: Context) -> PKCanvasView {
-        canvasView.tool = PKInkingTool(.pen, color: .gray, width: 10)
+        let toolPicker = PKToolPicker.init()
+        toolPicker.setVisible(true, forFirstResponder: canvasView)
+        toolPicker.addObserver(canvasView)
+        canvasView.becomeFirstResponder()
+        
         #if targetEnvironment(simulator)
         canvasView.drawingPolicy = .anyInput
         #endif
@@ -136,6 +148,20 @@ extension CanvasView: UIViewRepresentable {
     func updateUIView(_ uiView: PKCanvasView, context: Context) {}
 }
 
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
+    }
+}
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape( RoundedCorner(radius: radius, corners: corners) )
+    }
+}
 struct FooterView: View {
     @Binding var canvasView: PKCanvasView
     @Binding var timeRemaining: Int
@@ -158,6 +184,7 @@ struct FooterView: View {
             .frame(height: 100)
             .frame(maxWidth: .infinity)
             .background(Color.drawordAccent)
+            .cornerRadius(30, corners: [.topRight, .bottomRight])
             
             Button {
                 canvasView.drawing = PKDrawing()
@@ -178,7 +205,7 @@ struct PadGameView_Previews: PreviewProvider {
     static let users: [String] = ["Lorenzo", "Alberto", "Laura", "Ysaline"]
     
     static var previews: some View {
-        PadGameView(nop: .constant(users.count), gameState: getGameState(), connectionManager: getConnectionManager())
+        PadGameView(nop: .constant(users.count), gameState: getGameState(), connectionManager: getConnectionManager(), submitted: true)
     }
     
     static func getGameState() -> GameState {

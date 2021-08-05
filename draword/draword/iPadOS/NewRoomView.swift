@@ -53,11 +53,12 @@ struct NewRoomView: View {
     
     func check() {
         // An invite has been sent
-        if (connectionManager.usernames.count == nop) {
+        if (connectionManager.getNumberOfConnectedPeers() == nop) {
             print("All connections have been made")
             gameState.set(connectionManager: connectionManager)
             
             connectionManager.sendGame()
+            connectionManager.sendDraw(to: 0)
             
             // Change display view
             displayView = .game

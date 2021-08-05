@@ -13,6 +13,8 @@ let DEFAULT_NUM_OF_PLAYERS = 3
 
 let CODE_LENGTH = 4
 
+let TIMER_LENGTH = 90
+
 /*
  The messages sent between peers
  {MESSAGE_TYPE} - {sender} - {description}

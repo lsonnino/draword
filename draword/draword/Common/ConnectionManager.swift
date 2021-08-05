@@ -11,11 +11,11 @@
 import MultipeerConnectivity
 
 let SERVICE_NAME: String = "alf-draword"
+var peerID: MCPeerID?
 
 class ConnectionManager: NSObject, ObservableObject {
     var code: String = ""
     var name: String = ""
-    var peerID: MCPeerID? = nil
     
     @Published var session: MCSession? = nil
     @Published var peers: [MCPeerID] = []
@@ -30,7 +30,7 @@ class ConnectionManager: NSObject, ObservableObject {
     func set(name: String, code: String) {
         self.name = name
         self.code = code
-        self.peerID = MCPeerID(displayName: self.name)
+        peerID = MCPeerID(displayName: self.name)
         
         self.session = MCSession(
             peer: peerID!,
@@ -41,14 +41,14 @@ class ConnectionManager: NSObject, ObservableObject {
     }
     
     func host() { // Called by the iPad
-        browser = MCNearbyServiceBrowser(peer: self.peerID!, serviceType: SERVICE_NAME)
+        browser = MCNearbyServiceBrowser(peer: peerID!, serviceType: SERVICE_NAME)
         browser!.delegate = self
         
         browser!.startBrowsingForPeers()
     }
     func join(callback: (() -> Void)!) { // Called by the iPhone
         let info = ["Code": self.code]
-        advertiser = MCNearbyServiceAdvertiser(peer: self.peerID!, discoveryInfo: info, serviceType: SERVICE_NAME)
+        advertiser = MCNearbyServiceAdvertiser(peer: peerID!, discoveryInfo: info, serviceType: SERVICE_NAME)
         advertiser!.delegate = self
         
         self.callback = callback
@@ -56,14 +56,18 @@ class ConnectionManager: NSObject, ObservableObject {
         advertiser!.startAdvertisingPeer()
     }
     
-    func stopConnecting() {
-        if (browser != nil) {
-            browser!.stopBrowsingForPeers()
-        }
-        if (advertiser != nil) {
-            advertiser!.stopAdvertisingPeer()
-        }
+    func getNumberOfConnectedPeers() -> Int {
+        self.connectionStates.filter { $0 == .connected }.count
     }
+    
+    //func stopConnecting() {
+    //    if (browser != nil) {
+    //        browser!.stopBrowsingForPeers()
+    //    }
+    //    if (advertiser != nil) {
+    //        advertiser!.stopAdvertisingPeer()
+    //    }
+    //}
     
     func sendGame() {
         var message = Message()
@@ -72,8 +76,8 @@ class ConnectionManager: NSObject, ObservableObject {
         do {
             try self.session?.send(Message.encode(message: message), toPeers: self.peers, with: .reliable)
         }
-        catch {
-            // Do nothing
+        catch let error {
+            print("Failed to send \(message.type.rawValue): \(error)")
         }
     }
     func submitWord(submit word: String) {
@@ -85,7 +89,7 @@ class ConnectionManager: NSObject, ObservableObject {
             try self.session?.send(Message.encode(message: message), toPeers: self.peers, with: .reliable)
         }
         catch {
-            // Do nothing
+            print("Failed to send \(message.type.rawValue): \(error)")
         }
     }
     func sendAttempt(attempt: String) {
@@ -97,7 +101,7 @@ class ConnectionManager: NSObject, ObservableObject {
             try self.session?.send(Message.encode(message: message), toPeers: self.peers, with: .reliable)
         }
         catch {
-            // Do nothing
+            print("Failed to send \(message.type.rawValue): \(error)")
         }
     }
     func boradcastAttempt(boradcast attempt: String, from user: MCPeerID) {
@@ -112,7 +116,7 @@ class ConnectionManager: NSObject, ObservableObject {
                     try self.session?.send(Message.encode(message: message), toPeers: [self.peers[index]], with: .reliable)
                 }
                 catch {
-                    // Do nothing
+                    print("Failed to send \(message.type.rawValue): \(error)")
                 }
             }
         }
@@ -131,10 +135,10 @@ class ConnectionManager: NSObject, ObservableObject {
             }
             
             do {
-                try self.session?.send(Message.encode(message: message), toPeers: self.peers, with: .reliable)
+                try self.session?.send(Message.encode(message: message), toPeers: [self.peers[index]], with: .reliable)
             }
             catch {
-                // Do nothing
+                print("Failed to send \(message.type.rawValue): \(error)")
             }
         }
     }
@@ -146,7 +150,7 @@ class ConnectionManager: NSObject, ObservableObject {
             try self.session?.send(Message.encode(message: message), toPeers: [self.peers[index]], with: .reliable)
         }
         catch {
-            // Do nothing
+            print("Failed to send \(message.type.rawValue): \(error)")
         }
     }
     func sendEndGame(gameState: GameState) {
@@ -161,14 +165,14 @@ class ConnectionManager: NSObject, ObservableObject {
                 try self.session?.send(Message.encode(message: message), toPeers: self.peers, with: .reliable)
             }
             catch {
-                // Do nothing
+                print("Failed to send \(message.type.rawValue): \(error)")
             }
         }
     }
     
-    func disconnect() {
-        self.session!.disconnect()
-    }
+    //func disconnect() {
+    //    self.session!.disconnect()
+    //}
 }
 
 extension ConnectionManager: MCNearbyServiceBrowserDelegate {

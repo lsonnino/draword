@@ -57,8 +57,13 @@ struct PhoneGameView: View {
         case .game:
             displayView = .guess
         case .point:
-            attemptedGuesses.append(AttemptedGuess(user: message.user, attempt: message.text, thisUser: message.val > 0, guess: false))
-            points += Int(message.val)
+            attemptedGuesses.append(AttemptedGuess(user: message.text, attempt: message.text, thisUser: message.val > 0, guess: false))
+            if (displayView == .guess) {
+                points += Int(message.val)
+            }
+            else {
+                points += 1
+            }
         case .endGame:
             // Todo
             print("Game ended")
@@ -96,39 +101,46 @@ struct AttemptsView: View {
                 .foregroundColor(Color(.secondaryLabel))
                 .opacity(0.25)
             
-            ScrollView(.vertical) {
-                VStack (spacing: 5) {
-                    Text("Attempts made:")
-                        .font(.title)
-                    
-                    Divider()
-                    
-                    ForEach(attemptedGuesses, id: \.self) { attemptedGuess in
-                        HStack {
-                            if (attemptedGuess.guess) {
-                                Text(attemptedGuess.user + ": ")
-                                    .bold()
-                                    .font(.title3)
-                                    .foregroundColor(attemptedGuess.thisUser ? .drawordSecondary : Color(.label))
-                                Text(attemptedGuess.attempt)
-                                    .font(.title3)
-                            }
-                            else {
-                                Spacer()
+            ScrollViewReader { scrollView in
+                ScrollView(.vertical) {
+                    VStack (spacing: 5) {
+                        Text("Attempts made:")
+                            .font(.title)
+                        
+                        Divider()
+                        
+                        ForEach(attemptedGuesses, id: \.self) { attemptedGuess in
+                            HStack {
+                                if (attemptedGuess.guess) {
+                                    Text(attemptedGuess.user + ": ")
+                                        .bold()
+                                        .font(.title3)
+                                        .foregroundColor(attemptedGuess.thisUser ? .drawordSecondary : Color(.label))
+                                    Text(attemptedGuess.attempt)
+                                        .font(.title3)
+                                }
+                                else {
+                                    Spacer()
+                                    
+                                    Text("\(attemptedGuess.user) guessed the word !")
+                                        .bold()
+                                        .font(.title3)
+                                        .foregroundColor(.drawordSecondary)
+                                }
                                 
-                                Text("\(attemptedGuess.user) guessed the word !")
-                                    .bold()
-                                    .font(.title3)
-                                    .foregroundColor(.drawordSecondary)
+                                Spacer()
                             }
-                            
-                            Spacer()
                         }
+                        Spacer()
                     }
-                    Spacer()
                 }
+                .padding()
+                .onAppear(perform: {
+                    if (attemptedGuesses.count > 0) {
+                        scrollView.scrollTo(attemptedGuesses[attemptedGuesses.count - 1])
+                    }
+                })
             }
-            .padding()
         }
         .padding()
     }
@@ -163,6 +175,7 @@ struct AttemptFieldView: View {
     func send() {
         connectionManager.sendAttempt(attempt: attempt)
         attemptedGuesses.append(AttemptedGuess(user: connectionManager.name, attempt: attempt, thisUser: true, guess: true))
+        attempt = ""
     }
 }
 struct YourWordView: View {
@@ -241,6 +254,6 @@ struct PhoneGameView_Previews: PreviewProvider {
     ]
     
     static var previews: some View {
-        PhoneGameView(displayView: .constant(.game), attemptedGuesses: attemptedGuesses)
+        PhoneGameView(displayView: .constant(.guess), attemptedGuesses: attemptedGuesses)
     }
 }

@@ -22,14 +22,16 @@ struct drawordApp: App {
             
             if (UIDevice.current.userInterfaceIdiom == .pad) {
                 ZStack {
-                    MainPadBackgroundView()
-                    
                     switch displayView {
                     case .game:
                         PadGameView(nop: $nop, gameState: gameState, connectionManager: connectionManager)
                     case DisplayView.newRoom:
+                        MainPadBackgroundView()
+                        
                         NewRoomView(nop: $nop, connectionManager: connectionManager, gameState: gameState, displayView: $displayView)
                     default: // main
+                        MainPadBackgroundView()
+                        
                         MainPadView(displayView: $displayView, nop: $nop, connectionManager: connectionManager, gameState: gameState)
                     }
                 }
@@ -40,12 +42,12 @@ struct drawordApp: App {
             
             else {
                 ZStack {
-                    MainPhoneBackgroundView()
-                    
                     switch displayView {
                     case .game, .guess:
                         PhoneGameView(displayView: $displayView, gameState: gameState, connectionManager: connectionManager)
                     default: // main or phoneWaitParticipants
+                        MainPhoneBackgroundView()
+                        
                         MainPhoneView(displayView: $displayView, connectionManager: connectionManager)
                     }
                 }
