@@ -24,7 +24,7 @@ After each round has been played, the player(s) with the highest number of point
 
 On the iPad, select the number of players and the number of rounds. The latter is the number of times each player will have to be the drawer.
 
-![install](screenshots/iPad - Home.png)
+![iPad - Home](screenshots/iPad - Home.png)
 
 The iPad then displays a code identifying the game. Each player can then choose a username and join the game using the code.
 
