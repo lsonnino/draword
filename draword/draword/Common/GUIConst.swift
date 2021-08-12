@@ -17,6 +17,7 @@ enum DisplayView {
     case main
     case newRoom
     case game
+    case end
     // iPhone only
     case phoneWaitParticipants
     case guess

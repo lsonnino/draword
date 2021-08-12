@@ -13,12 +13,14 @@ struct PadGameView: View {
     @Binding var nop: Int
     @ObservedObject var gameState: GameState = GameState()
     @ObservedObject var connectionManager: ConnectionManager = ConnectionManager()
+    @Binding var displayView: DisplayView
     
     @State var drawing: Int = 0
     @State var word: String = ""
     @State var submitted: Bool = false
     @State var timeRemaining = TIMER_LENGTH
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State var round: Int = 1
     
     @State private var canvasView = PKCanvasView()
     
@@ -36,7 +38,6 @@ struct PadGameView: View {
                                     timeRemaining -= 1
                                 }
                                 else {
-                                    timeRemaining = TIMER_LENGTH
                                     nextPlayer()
                                 }
                             }
@@ -82,8 +83,25 @@ struct PadGameView: View {
     }
     
     func nextPlayer() {
+        // Reset the timer
+        timeRemaining = TIMER_LENGTH
+        
+        // Pass to the next player
         drawing += 1
-        drawing = drawing % nop
+        if (drawing >= nop) {
+            drawing = drawing % nop
+            round += 1
+            
+            if (round > numOfRounds) {
+                // Game ended
+                connectionManager.sendEndGame(gameState: gameState)
+                displayView = .end
+                connectionManager.disconnect()
+                return
+            }
+        }
+        
+        // Notify the other players
         connectionManager.sendGame()
         connectionManager.sendDraw(to: drawing)
         canvasView.drawing = PKDrawing()
@@ -148,20 +166,6 @@ extension CanvasView: UIViewRepresentable {
     func updateUIView(_ uiView: PKCanvasView, context: Context) {}
 }
 
-struct RoundedCorner: Shape {
-    var radius: CGFloat = .infinity
-    var corners: UIRectCorner = .allCorners
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-        return Path(path.cgPath)
-    }
-}
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape( RoundedCorner(radius: radius, corners: corners) )
-    }
-}
 struct FooterView: View {
     @Binding var canvasView: PKCanvasView
     @Binding var timeRemaining: Int
@@ -205,7 +209,7 @@ struct PadGameView_Previews: PreviewProvider {
     static let users: [String] = ["Lorenzo", "Alberto", "Laura", "Ysaline"]
     
     static var previews: some View {
-        PadGameView(nop: .constant(users.count), gameState: getGameState(), connectionManager: getConnectionManager(), submitted: true)
+        PadGameView(nop: .constant(users.count), gameState: getGameState(), connectionManager: getConnectionManager(), displayView: .constant(.game), submitted: true)
     }
     
     static func getGameState() -> GameState {

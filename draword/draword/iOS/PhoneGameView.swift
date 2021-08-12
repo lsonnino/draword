@@ -65,8 +65,9 @@ struct PhoneGameView: View {
                 points += 1
             }
         case .endGame:
-            // Todo
-            print("Game ended")
+            gameState.usernames.append(message.text)
+            gameState.points.append(.max)
+            displayView = .end
         default:
             print("Unsupported type: \(message.type.rawValue)")
         }

@@ -13,7 +13,12 @@ let DEFAULT_NUM_OF_PLAYERS = 3
 
 let CODE_LENGTH = 4
 
-let TIMER_LENGTH = 90
+let TIMER_LENGTH = 60
+
+let MIN_NUM_OF_ROUNDS = 2
+let MAX_NUM_OF_ROUNDS = 5
+let DEFAULT_NUM_OF_ROUNDS = 3
+var numOfRounds = DEFAULT_NUM_OF_ROUNDS
 
 /*
  The messages sent between peers

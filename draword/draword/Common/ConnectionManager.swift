@@ -170,9 +170,9 @@ class ConnectionManager: NSObject, ObservableObject {
         }
     }
     
-    //func disconnect() {
-    //    self.session!.disconnect()
-    //}
+    func disconnect() {
+        self.session!.disconnect()
+    }
 }
 
 extension ConnectionManager: MCNearbyServiceBrowserDelegate {

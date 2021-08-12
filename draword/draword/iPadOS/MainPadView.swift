@@ -13,6 +13,8 @@ struct MainPadView: View {
     @ObservedObject var connectionManager: ConnectionManager = ConnectionManager()
     @ObservedObject var gameState: GameState = GameState()
     
+    @State var nor: Int = DEFAULT_NUM_OF_ROUNDS
+    
     var body: some View {
         VStack {
             Spacer()
@@ -28,10 +30,15 @@ struct MainPadView: View {
                 
             Spacer()
                 
-            PlayerNumberSelectorView(nop: $nop)
+            NumberSelectorView(text: "Number of players:", val: $nop, min: MIN_NUM_OF_PLAYERS, max: MAX_NUM_OF_PLAYERS)
+                .padding()
+            
+            NumberSelectorView(text: "Number of rounds:", val: $nor, min: MIN_NUM_OF_ROUNDS, max: MAX_NUM_OF_ROUNDS)
                 .padding()
                 
             Button {
+                numOfRounds = nor
+                
                 connectionManager.set(name: "Draword", code: random(digits: CODE_LENGTH))
                 connectionManager.host()
                     
@@ -59,20 +66,23 @@ struct MainPadView: View {
     }
 }
 
-struct PlayerNumberSelectorView: View {
-    @Binding public var nop: Int
+struct NumberSelectorView: View {
+    public var text: String
+    @Binding public var val: Int
+    public var min: Int
+    public var max: Int
     
     var body: some View {
         VStack {
-            Text("Number of players:")
+            Text(text)
                 .frame(width: 400, height: 50, alignment: .leading)
                 .font(.title)
                 .foregroundColor(.drawordAccent)
             HStack {
                 Button {
-                    nop -= 1
-                    if (nop < MIN_NUM_OF_PLAYERS) {
-                        nop = MIN_NUM_OF_PLAYERS
+                    val -= 1
+                    if (val < min) {
+                        val = min
                     }
                 } label: {
                     Image(systemName: "chevron.left.circle")
@@ -81,12 +91,12 @@ struct PlayerNumberSelectorView: View {
                 }
                 
                 Button {
-                    nop += 1
-                    if (nop > MAX_NUM_OF_PLAYERS) {
-                        nop = MIN_NUM_OF_PLAYERS
+                    val += 1
+                    if (val > max) {
+                        val = min
                     }
                 } label: {
-                    Text("\(nop)")
+                    Text("\(val)")
                         .bold()
                         .frame(width: 280, height: 50)
                         .foregroundColor(.white)
@@ -95,9 +105,9 @@ struct PlayerNumberSelectorView: View {
                 }
                 
                 Button {
-                    nop += 1
-                    if (nop > MAX_NUM_OF_PLAYERS) {
-                        nop = MAX_NUM_OF_PLAYERS
+                    val += 1
+                    if (val > max) {
+                        val = max
                     }
                 } label: {
                     Image(systemName: "chevron.right.circle")
