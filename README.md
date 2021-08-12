@@ -24,13 +24,13 @@ After each round has been played, the player(s) with the highest number of point
 
 On the iPad, select the number of players and the number of rounds. The latter is the number of times each player will have to be the drawer.
 
-![install](screenshots/iPad - Home.png)
+![iPad - Home](screenshots/iPad%20-%20Home.png)
 
 The iPad then displays a code identifying the game. Each player can then choose a username and join the game using the code.
 
-![iPad - Wait](screenshots/iPad - Wait.png)
+![iPad - Wait](screenshots/iPad%20-%20Wait.png)
 
-![iPhone - Home](screenshots/iPhone - Home.png)
+![iPhone - Home](screenshots/iPhone%20-%20Home.png)
 
 The game then starts.
 
@@ -38,19 +38,19 @@ The game then starts.
 
 Each turn, the drawer chooses his word on his phone. The word is then hidden on his phone but he can still reveals it in case he forgets by tapping the "Tap to reveal" text. The word is then hidden once again once he taps it again. The drawer can then draw on the iPad. The iPad displays the current score of each player, the timer as well as a "delete" button to quickly erase the drawing.
 
-![iPhone - Choose](screenshots/iPhone - Choose.png)
+![iPhone - Choose](screenshots/iPhone%20-%20Choose.png)
 
-![iPhone - Draw](screenshots/iPhone - Draw.png)
+![iPhone - Draw](screenshots/iPhone%20-%20Draw.png)
 
-![iPad - Draw](screenshots/iPad - Draw.png)
+![iPad - Draw](screenshots/iPad%20-%20Draw.png)
 
 The guessers can make attempts and watch other's attempts on their phones.
 
-![iPhone Guess](screenshots/iPhone Guess.png)
+![iPhone Guess](screenshots/iPhone%20-%20Guess.png)
 
 At the end of the game, the iPad shows the final scores.
 
-![iPad - End](screenshots/iPad - End.png)
+![iPad - End](screenshots/iPad%20-%20End.png)
 
 ## How to install
 
