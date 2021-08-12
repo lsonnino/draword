@@ -1,6 +1,8 @@
 # Draword
 Draword is a local pictionary-like game for iPhone and iPad. One player at a time choses a word for the other players to guess. Then draws the word he chose to help the other players. The first player who guesses the word gets a point as well as the drawer.
 
+**Why is this app not on the App Store ?** Simply because it costs money to submit it.
+
 ## Concept
 
 To play this game, you will need one iPhone per player and one iPad for the group. The iPad will serve as the main device while the iPhone serves as a personal consol for each player.
@@ -60,6 +62,8 @@ At the end of the game, the iPad shows the final scores.
 4. Click play
 
 ![install](screenshots/install.png)
+
+The developer (me) then has to be trusted by the iPhone. To do so, go to the device's Settings → General → Device Management. Then select me under "Developer App" and trust me.
 
 ## Todo
 
