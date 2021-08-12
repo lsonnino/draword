@@ -30,7 +30,7 @@ struct drawordApp: App {
                         
                         NewRoomView(nop: $nop, connectionManager: connectionManager, gameState: gameState, displayView: $displayView)
                     case .end:
-                        PadEndView(nop: $nop, nor: .constant(numOfRounds), displayView: $displayView, gameState: gameState)
+                        PadEndView(nop: $nop, nor: .constant(numOfRounds), displayView: $displayView, connectionManager: connectionManager, gameState: gameState)
                     default: // main
                         MainPadBackgroundView()
                         

@@ -32,7 +32,7 @@ struct PadGameView: View {
                     VStack {
                         CanvasView(canvasView: $canvasView)
                         
-                        FooterView(canvasView: $canvasView, timeRemaining: $timeRemaining)
+                        FooterView(canvasView: $canvasView, submitted: $submitted, timeRemaining: $timeRemaining)
                             .onReceive(timer) { _ in
                                 if timeRemaining > 0 {
                                     timeRemaining -= 1
@@ -66,6 +66,8 @@ struct PadGameView: View {
         case .submit:
             submitted = true
             word = message.text
+            // Reset the timer
+            timeRemaining = TIMER_LENGTH
         case .attempt:
             // note: the broadcast is automatic
             if (word == message.text && message.userIndex >= 0) { // The user guessed
@@ -100,6 +102,8 @@ struct PadGameView: View {
                 return
             }
         }
+        
+        submitted = false
         
         // Notify the other players
         connectionManager.sendGame()
@@ -168,6 +172,7 @@ extension CanvasView: UIViewRepresentable {
 
 struct FooterView: View {
     @Binding var canvasView: PKCanvasView
+    @Binding var submitted: Bool
     @Binding var timeRemaining: Int
     
     var body: some View {
@@ -175,11 +180,11 @@ struct FooterView: View {
             HStack {
                 Spacer()
                 
-                Text("Remaining time: ")
+                Text(submitted ? "Remaining time: " : "waiting")
                     .font(.custom("ArialRoundedMTBold", size: 30))
                     .bold()
                     .foregroundColor(.white)
-                Text("\(timeRemaining)")
+                Text(submitted ? "\(timeRemaining)" : "")
                     .font(.custom("ArialRoundedMTBold", size: 30))
                     .foregroundColor(.white)
                 

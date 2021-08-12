@@ -12,6 +12,7 @@ let MAX_NUM_OF_PLAYERS = 4
 let DEFAULT_NUM_OF_PLAYERS = 3
 
 let CODE_LENGTH = 4
+let USERNAME_MAX_LENGTH = 12
 
 let TIMER_LENGTH = 60
 
@@ -135,5 +136,10 @@ class GameState: ObservableObject {
         return self.points.indices.filter({
             self.points[$0] == maxScore
         })
+    }
+    
+    func reset() {
+        self.usernames = []
+        self.points = []
     }
 }

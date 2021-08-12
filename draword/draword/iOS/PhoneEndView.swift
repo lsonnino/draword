@@ -43,6 +43,7 @@ struct PhoneEndView: View {
         }
         .onTapGesture {
             if (textOpacity == 1.0) {
+                gameState.reset()
                 displayView = .main
             }
         }

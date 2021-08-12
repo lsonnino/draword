@@ -57,6 +57,7 @@ struct ConnectSubView: View {
         VStack {
             TextField("Username", text: $username)
                 .disableAutocorrection(true)
+                .onReceive(Just(username)) { _ in limitUsernameLength() }
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .frame(width: 200, height: 50, alignment: .center)
             TextField("Room", text: $code)
@@ -88,6 +89,12 @@ struct ConnectSubView: View {
     func limitCodeLength() {
         if code.count > CODE_LENGTH {
             code = String(code.prefix(CODE_LENGTH))
+        }
+    }
+    
+    func limitUsernameLength() {
+        if username.count > USERNAME_MAX_LENGTH {
+            username = String(username.prefix(USERNAME_MAX_LENGTH))
         }
     }
 }

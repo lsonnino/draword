@@ -14,6 +14,14 @@ struct AttemptedGuess: Hashable {
     var guess: Bool = true
 }
 
+#if canImport(UIKit)
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+#endif
+
 struct PhoneGameView: View {
     @Binding var displayView: DisplayView
     @ObservedObject var gameState: GameState = GameState()
@@ -68,6 +76,7 @@ struct PhoneGameView: View {
             gameState.usernames.append(message.text)
             gameState.points.append(.max)
             displayView = .end
+            connectionManager.disconnect()
         default:
             print("Unsupported type: \(message.type.rawValue)")
         }
@@ -174,6 +183,13 @@ struct AttemptFieldView: View {
     }
     
     func send() {
+        if (attempt.isEmpty) {
+            hideKeyboard()
+            return
+        }
+        
+        attempt = attempt.trimmingCharacters(in: .whitespacesAndNewlines)
+        
         connectionManager.sendAttempt(attempt: attempt)
         attemptedGuesses.append(AttemptedGuess(user: connectionManager.name, attempt: attempt, thisUser: true, guess: true))
         attempt = ""
@@ -236,6 +252,7 @@ struct YourWordView: View {
     func send() {
         submitted = true
         shown = false
+        word = word.trimmingCharacters(in: .whitespacesAndNewlines)
         connectionManager.submitWord(submit: word)
     }
 }

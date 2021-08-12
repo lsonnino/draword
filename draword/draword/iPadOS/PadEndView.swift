@@ -11,6 +11,7 @@ struct PadEndView: View {
     @Binding var nop: Int
     @Binding var nor: Int
     @Binding var displayView: DisplayView
+    @ObservedObject var connectionManager: ConnectionManager = ConnectionManager()
     @ObservedObject var gameState: GameState = GameState()
     
     @State var textOpacity = 0.0
@@ -52,6 +53,8 @@ struct PadEndView: View {
         .contentShape(Rectangle()) // Can tap on the whole area
         .onTapGesture {
             if (textOpacity == 1.0) {
+                connectionManager.reset()
+                gameState.reset()
                 displayView = .main
             }
         }

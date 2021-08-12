@@ -173,6 +173,11 @@ class ConnectionManager: NSObject, ObservableObject {
     func disconnect() {
         self.session!.disconnect()
     }
+    func reset() {
+        self.peers = []
+        self.usernames = []
+        self.connectionStates = []
+    }
 }
 
 extension ConnectionManager: MCNearbyServiceBrowserDelegate {

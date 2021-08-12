@@ -3,9 +3,6 @@
 
 ## Todo
 
-* Re-implement peer-to-peer
-* Limit maximum number of characters for the username
-* Debug gameplay
-* End-game and restart
+* Better use of multipeer connectivity: do not implement client-server
 * Reestablish closed connection when the app gets back from background
 
